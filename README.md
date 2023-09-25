@@ -1,1 +1,1 @@
-# GraphQL GoLang MongoDB CRUD Project
+# GraphQL GoLang CRUD Project
