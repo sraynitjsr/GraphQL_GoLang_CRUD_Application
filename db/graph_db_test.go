@@ -85,3 +85,19 @@ func TestCreateNode(t *testing.T) {
 	mockSession.AssertExpectations(t)
 	assert.NoError(t, err)
 }
+
+func TestUpdateNode(t *testing.T) {
+	mockDriver := new(MockNeo4jDriver)
+	graphDB := &GraphDatabase{dbDriver: mockDriver}
+	mockSession := new(MockNeo4jSession)
+	mockDriver.On("NewSession", mock.Anything).Return(mockSession)
+	mockSession.On("Run", "MATCH (n:Node) WHERE ID(n) = $id SET n.name = $name", map[string]interface{}{"id": 123, "name": "updated"}).
+		Return(new(MockNeo4jResult), nil)
+	mockSession.On("Close").Return(nil)
+
+	err := graphDB.UpdateNode(123, "updated")
+
+	mockDriver.AssertExpectations(t)
+	mockSession.AssertExpectations(t)
+	assert.NoError(t, err)
+}
