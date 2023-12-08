@@ -101,3 +101,19 @@ func TestUpdateNode(t *testing.T) {
 	mockSession.AssertExpectations(t)
 	assert.NoError(t, err)
 }
+
+func TestDeleteNode(t *testing.T) {
+	mockDriver := new(MockNeo4jDriver)
+	graphDB := &GraphDatabase{dbDriver: mockDriver}
+	mockSession := new(MockNeo4jSession)
+	mockDriver.On("NewSession", mock.Anything).Return(mockSession)
+	mockSession.On("Run", "MATCH (n:Node) WHERE ID(n) = $id DELETE n", map[string]interface{}{"id": 123}).
+		Return(new(MockNeo4jResult), nil)
+	mockSession.On("Close").Return(nil)
+
+	err := graphDB.DeleteNode(123)
+
+	mockDriver.AssertExpectations(t)
+	mockSession.AssertExpectations(t)
+	assert.NoError(t, err)
+}
