@@ -69,3 +69,19 @@ func TestGetNodeByID(t *testing.T) {
 	mockSession.AssertExpectations(t)
 	assert.NoError(t, err)
 }
+
+func TestCreateNode(t *testing.T) {
+	mockDriver := new(MockNeo4jDriver)
+	graphDB := &GraphDatabase{dbDriver: mockDriver}
+	mockSession := new(MockNeo4jSession)
+	mockDriver.On("NewSession", mock.Anything).Return(mockSession)
+	mockSession.On("Run", "CREATE (n:Node {name: $name}) RETURN ID(n) as id", map[string]interface{}{"name": "test"}).
+		Return(new(MockNeo4jResult), nil)
+	mockSession.On("Close").Return(nil)
+
+	_, err := graphDB.CreateNode("test")
+
+	mockDriver.AssertExpectations(t)
+	mockSession.AssertExpectations(t)
+	assert.NoError(t, err)
+}
