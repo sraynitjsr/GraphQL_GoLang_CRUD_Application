@@ -15,13 +15,16 @@ import (
 
 type MockDB struct{}
 
+// Mock Implementation
 func (m *MockDB) GetNodes() ([]Node, error) {
 	return []Node{{ID: 1, Name: "Node1"}, {ID: 2, Name: "Node2"}}, nil
 }
 
+// Mock Implementation
 func (m *MockDB) GetNodeByID(id int) (*Node, error) {
 	if id == 1 {
 		return &Node{ID: 1, Name: "Node1"}, nil
 	}
 	return nil, errors.New("Node not found")
 }
+
