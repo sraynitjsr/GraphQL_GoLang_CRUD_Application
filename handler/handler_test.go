@@ -28,3 +28,35 @@ func (m *MockDB) GetNodeByID(id int) (*Node, error) {
 	return nil, errors.New("Node not found")
 }
 
+func TestGetNodes(t *testing.T) {
+	// Create a mock database
+	mockDB := &MockDB{}
+
+	// Create a Gin router
+	r := gin.Default()
+
+	// Define the route
+	r.GET("/nodes", GetNodes(mockDB))
+
+	// Create an HTTP request
+	req, err := http.NewRequest("GET", "/nodes", nil)
+	assert.NoError(t, err)
+
+	// Create a response recorder
+	w := httptest.NewRecorder()
+
+	// Perform the request
+	r.ServeHTTP(w, req)
+
+	// Check the response status code
+	assert.Equal(t, http.StatusOK, w.Code)
+
+	// Decode the response body
+	var nodes []Node
+	err = json.Unmarshal(w.Body.Bytes(), &nodes)
+	assert.NoError(t, err)
+
+	// Check the response body
+	expectedNodes := []Node{{ID: 1, Name: "Node1"}, {ID: 2, Name: "Node2"}}
+	assert.Equal(t, expectedNodes, nodes)
+}
